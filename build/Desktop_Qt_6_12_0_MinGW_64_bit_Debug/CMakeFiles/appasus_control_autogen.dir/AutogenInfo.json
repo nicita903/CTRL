@@ -1145,7 +1145,13 @@
 		"E:/programs/Qt/6.12.0/mingw_64/lib/cmake/Qt6Core/Qt6CoreConfigureFileTemplate.in",
 		"E:/programs/Qt/6.12.0/mingw_64/lib/cmake/Qt6Qml/Qt6QmlModuleDirMappingTemplate.qrc.in",
 		"E:/programs/Qt/6.12.0/mingw_64/lib/cmake/Qt6Core/Qt6CoreConfigureFileTemplate.in",
+		"E:/programs/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CTest.cmake",
+		"E:/programs/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CTestUseLaunchers.cmake",
+		"E:/programs/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CTestTargets.cmake",
+		"E:/programs/Qt/Tools/CMake_64/share/cmake-3.30/Modules/DartConfiguration.tcl.in",
 		"E:/programs/Qt/6.12.0/mingw_64/lib/cmake/Qt6Qml/Qt6qmldirTemplate.cmake.in",
+		"E:/programs/Qt/6.12.0/mingw_64/lib/cmake/Qt6/windows/app.exe.manifest.in",
+		"E:/programs/Qt/6.12.0/mingw_64/lib/cmake/Qt6/windows/app.exe.manifest.in",
 		"D:/projects/asus_control/asus_control/build/Desktop_Qt_6_12_0_MinGW_64_bit_Debug/.qt/qml_imports/appasus_control_conf.cmake",
 		"E:/programs/Qt/6.12.0/mingw_64/lib/cmake/Qt6/windows/app.exe.manifest.in"
 	],
@@ -1156,9 +1162,69 @@
 	"HEADERS" : 
 	[
 		[
+			"D:/projects/asus_control/asus_control/backend/BatteryMonitor.h",
+			"MU",
+			"FVSNT77ZGO/moc_BatteryMonitor.cpp",
+			null
+		],
+		[
+			"D:/projects/asus_control/asus_control/backend/BatteryReadings.h",
+			"MU",
+			"FVSNT77ZGO/moc_BatteryReadings.cpp",
+			null
+		],
+		[
 			"D:/projects/asus_control/asus_control/backend/SystemMonitor.h",
 			"MU",
 			"FVSNT77ZGO/moc_SystemMonitor.cpp",
+			null
+		],
+		[
+			"D:/projects/asus_control/asus_control/hardware/AsusProtocol.h",
+			"MU",
+			"LUN34XP4RL/moc_AsusProtocol.cpp",
+			null
+		],
+		[
+			"D:/projects/asus_control/asus_control/hardware/AsusSensors.h",
+			"MU",
+			"LUN34XP4RL/moc_AsusSensors.cpp",
+			null
+		],
+		[
+			"D:/projects/asus_control/asus_control/hardware/AsusWmiController.h",
+			"MU",
+			"LUN34XP4RL/moc_AsusWmiController.cpp",
+			null
+		],
+		[
+			"D:/projects/asus_control/asus_control/hardware/CpuController.h",
+			"MU",
+			"LUN34XP4RL/moc_CpuController.cpp",
+			null
+		],
+		[
+			"D:/projects/asus_control/asus_control/hardware/FanController.h",
+			"MU",
+			"LUN34XP4RL/moc_FanController.cpp",
+			null
+		],
+		[
+			"D:/projects/asus_control/asus_control/hardware/HardwareCapabilities.h",
+			"MU",
+			"LUN34XP4RL/moc_HardwareCapabilities.cpp",
+			null
+		],
+		[
+			"D:/projects/asus_control/asus_control/hardware/HardwareManager.h",
+			"MU",
+			"LUN34XP4RL/moc_HardwareManager.cpp",
+			null
+		],
+		[
+			"D:/projects/asus_control/asus_control/hardware/NvidiaController.h",
+			"MU",
+			"LUN34XP4RL/moc_NvidiaController.cpp",
 			null
 		]
 	],
@@ -1168,6 +1234,7 @@
 	"MOC_DEFINITIONS" : 
 	[
 		"MINGW_HAS_SECURE_API=1",
+		"NOMINMAX",
 		"QT_CORE_LIB",
 		"QT_GUI_LIB",
 		"QT_NEEDS_QMAIN",
@@ -1179,6 +1246,7 @@
 		"QT_QUICK_LIB",
 		"UNICODE",
 		"WIN32",
+		"WIN32_LEAN_AND_MEAN",
 		"WIN64",
 		"_ENABLE_EXTENDED_ALIGNED_STORAGE",
 		"_UNICODE",
@@ -1224,6 +1292,7 @@
 	"MOC_PREDEFS_CMD" : 
 	[
 		"E:/programs/Qt/Tools/mingw1310_64/bin/g++.exe",
+		"-std=gnu++20",
 		"-dM",
 		"-E",
 		"-c",
@@ -1250,7 +1319,42 @@
 	"SOURCES" : 
 	[
 		[
+			"D:/projects/asus_control/asus_control/backend/BatteryMonitor.cpp",
+			"MU",
+			null
+		],
+		[
 			"D:/projects/asus_control/asus_control/backend/SystemMonitor.cpp",
+			"MU",
+			null
+		],
+		[
+			"D:/projects/asus_control/asus_control/hardware/AsusSensors.cpp",
+			"MU",
+			null
+		],
+		[
+			"D:/projects/asus_control/asus_control/hardware/AsusWmiController.cpp",
+			"MU",
+			null
+		],
+		[
+			"D:/projects/asus_control/asus_control/hardware/CpuController.cpp",
+			"MU",
+			null
+		],
+		[
+			"D:/projects/asus_control/asus_control/hardware/FanController.cpp",
+			"MU",
+			null
+		],
+		[
+			"D:/projects/asus_control/asus_control/hardware/HardwareManager.cpp",
+			"MU",
+			null
+		],
+		[
+			"D:/projects/asus_control/asus_control/hardware/NvidiaController.cpp",
 			"MU",
 			null
 		],

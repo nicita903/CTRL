@@ -9,10 +9,16 @@ ApplicationWindow {
     minimumWidth: 880
     minimumHeight: 600
     visible: true
-    title: "Volt Control"
+    title: "CTRL"
     color: "#050608"
 
-    // Visual prototype. No Windows processes or hardware settings are changed.
+    // Native telemetry; process and tuning controls remain explicitly staged demos.
+    function updateMonitoringContext() {
+        systemMonitor.setMonitoringContext(!visible || visibility === Window.Minimized, page)
+    }
+    onPageChanged: updateMonitoringContext()
+    onVisibilityChanged: updateMonitoringContext()
+    Component.onCompleted: updateMonitoringContext()
     readonly property color bg: "#050608"
     readonly property color surface: "#0C1015"
     readonly property color surfaceRaised: "#121922"
@@ -44,7 +50,7 @@ ApplicationWindow {
     property bool trayEnabled: true
     property bool processMonitor: true
     property bool hardwareStaged: false
-    property string consoleMessage: "Volt Control ready · Windows telemetry connected; controls simulated"
+    property string consoleMessage: "CTRL ready · Windows telemetry connected; hardware writes require Apply; process/profile demos"
     property var pageNames: ["Overview", "Processes", "Hardware & Cooling", "Profiles", "Settings"]
     property var pageCodes: ["OVR", "PRC", "HW", "PRF", "SET"]
     property var sampleProcesses: [
@@ -75,12 +81,46 @@ ApplicationWindow {
     function command(raw) {
         var cmd = raw.trim().toLowerCase()
         if (cmd === "help") logMessage("help · status · eco · balanced · performance · processes · hardware · clear")
-        else if (cmd === "status") logMessage("[LIVE] battery=" + systemMonitor.batteryPercent + "% cpu=" + systemMonitor.cpuPercent.toFixed(1) + "% · profile UI=" + profile)
+        else if (cmd === "status") logMessage("[LIVE] battery=" + systemMonitor.batteryPercent + "% cpu=" + systemMonitor.cpuPercent.toFixed(1) + "% discharge=" + (systemMonitor.dischargeWatts >= 0 ? systemMonitor.dischargeWatts.toFixed(1) + "W" : "N/A") + " cpuTemp=" + (systemMonitor.cpuTemperatureC >= 0 ? systemMonitor.cpuTemperatureC.toFixed(1) + "C" : "N/A") + " · profile UI=" + profile)
         else if (cmd === "eco" || cmd === "balanced" || cmd === "performance") setProfile(cmd.toUpperCase())
         else if (cmd === "processes") { page = 1; logMessage("Opened processes") }
         else if (cmd === "hardware") { page = 2; logMessage("Opened hardware") }
         else if (cmd === "clear") logMessage("_")
         else if (cmd.length) logMessage("[WARN] unknown command: " + cmd)
+    }
+    Dialog {
+        id: hardwareConsent
+        parent: Overlay.overlay
+        anchors.centerIn: parent
+        width: Math.min(win.width - 60, 650)
+        title: "Apply native hardware changes?"
+        modal: true
+        standardButtons: Dialog.Ok | Dialog.Cancel
+        palette.window: win.surface
+        palette.windowText: win.ink
+        palette.button: win.surfaceRaised
+        palette.buttonText: win.ink
+        contentItem: ColumnLayout {
+            MonoText { text: "This writes firmware or Windows power policies. Fan modes may reset custom curves. GPU changes may reconfigure displays; ECO checks for active GPU clients/displays and may initialize NVIDIA to do so. No applications will be terminated."; Layout.fillWidth: true; wrapMode: Text.WordWrap }
+            MonoText { text: "ASUS active performance mode and custom curves cannot be read back. A fan-curve Apply FIRST selects the editor's base firmware mode, which may reset previous custom curves. Previous unreadable settings cannot be restored automatically; factory curves can be reapplied. Firmware thermal protection stays active."; color: win.warning; Layout.fillWidth: true; wrapMode: Text.WordWrap }
+            MonoText { text: JSON.stringify(hardwareManager.pending); Layout.fillWidth: true; wrapMode: Text.WrapAnywhere; font.pixelSize: 11 }
+        }
+        onAccepted: hardwareManager.applyConfirmed(true)
+    }
+    Dialog {
+        id: nvidiaConsent
+        parent: Overlay.overlay
+        anchors.centerIn: parent
+        width: Math.min(win.width - 60, 550)
+        title: "Inspect NVIDIA GPU?"
+        modal: true
+        standardButtons: Dialog.Ok | Dialog.Cancel
+        palette.window: win.surface
+        palette.windowText: win.ink
+        palette.button: win.surfaceRaised
+        palette.buttonText: win.ink
+        contentItem: MonoText { text: "This on-demand inspection initializes NVML and may wake the dGPU in Standard mode. ECO mode skips NVML. There is no continuous NVIDIA polling. Pending settings must be discarded first."; wrapMode: Text.WordWrap }
+        onAccepted: hardwareManager.inspectNvidia()
     }
     Shortcut { sequence: "Ctrl+1"; onActivated: win.page = 0 }
     Shortcut { sequence: "Ctrl+2"; onActivated: win.page = 1 }
@@ -146,6 +186,77 @@ ApplicationWindow {
         }
         MouseArea { id: pointer; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: pb.chosen() }
     }
+    function hardwareCap(key) {
+        return hardwareManager.state[key] || {state:"UNSUPPORTED", reason:"Discovery pending", enabled:false, value:null, options:[]}
+    }
+    function stageFanDuty(setting, point, duty) {
+        var source = hardwareManager.pending[setting] || hardwareCap(setting).value || []
+        var next = []
+        for (var i=0; i<source.length; ++i)
+            next.push({temperature:source[i].temperature, duty:i === point ? duty : source[i].duty})
+        hardwareManager.stage(setting, next)
+    }
+    component HardwareOptions: ColumnLayout {
+        id: optionControl
+        property string setting: "performance"
+        property string heading: "PERFORMANCE MODE"
+        readonly property var report: win.hardwareCap(setting === "boostAC" || setting === "boostDC" ? "boost" : setting)
+        readonly property var current: setting === "boostAC" ? report.ac : setting === "boostDC" ? report.dc : report.value
+        Layout.fillWidth: true
+        spacing: 7
+        SectionTag { text: optionControl.heading }
+        Row {
+            spacing: -1
+            Repeater {
+                model: optionControl.report.options || []
+                ProfileButton {
+                    required property var modelData
+                    choice: modelData.label
+                    enabled: optionControl.report.enabled && !hardwareManager.busy && !(optionControl.setting === "performance" && modelData.value === 1 && systemMonitor.powerSource !== "AC")
+                    opacity: enabled ? 1 : 0.4
+                    active: (hardwareManager.pending[optionControl.setting] !== undefined ? hardwareManager.pending[optionControl.setting] : optionControl.current) === modelData.value
+                    onChosen: hardwareManager.stage(optionControl.setting, modelData.value)
+                }
+            }
+        }
+        MonoText { text: optionControl.report.state + " · " + optionControl.report.reason; color: win.muted; font.pixelSize: 11; Layout.fillWidth: true; wrapMode: Text.WordWrap }
+    }
+    component FanCurveEditor: ColumnLayout {
+        id: curveControl
+        property string setting: "cpuCurve"
+        property string heading: "CPU FACTORY / CUSTOM CURVE"
+        readonly property var report: win.hardwareCap(setting)
+        readonly property var points: report.value || []
+        Layout.fillWidth: true
+        spacing: 5
+        SectionTag { text: curveControl.heading }
+        MonoText { text: curveControl.report.state + " · " + curveControl.report.reason; color: win.muted; font.pixelSize: 11; Layout.fillWidth: true; wrapMode: Text.WordWrap }
+        Flow {
+            Layout.fillWidth: true
+            spacing: 8
+            Repeater {
+                model: curveControl.points
+                Column {
+                    required property int index
+                    required property var modelData
+                    spacing: 3
+                    MonoText { text: modelData.temperature + "°C"; color: win.muted; font.pixelSize: 11 }
+                    SpinBox {
+                        width: 90; height: 30
+                        from: modelData.duty; to: 100; stepSize: 1; editable: true
+                        enabled: curveControl.report.enabled && !hardwareManager.busy
+                        palette.base: win.surface
+                        palette.text: win.ink
+                        palette.button: win.surfaceRaised
+                        palette.buttonText: win.ink
+                        value: hardwareManager.pending[curveControl.setting] ? hardwareManager.pending[curveControl.setting][index].duty : modelData.duty
+                        onValueModified: win.stageFanDuty(curveControl.setting, index, value)
+                    }
+                }
+            }
+        }
+        MonoText { text: "Factory temperature bins are fixed; duty (%) may only increase. No direct fan-speed commands."; color: win.faint; font.pixelSize: 11; Layout.fillWidth: true; wrapMode: Text.WordWrap }
+    }
     component ToggleSwitch: Item {
         id: toggle
         property bool checked: false
@@ -207,7 +318,7 @@ ApplicationWindow {
                     color: slider.enabled ? win.cyan : win.faint
                 }
             }
-            MonoText { text: control.value + control.suffix; Layout.preferredWidth: 58; horizontalAlignment: Text.AlignRight }
+            MonoText { text: control.available ? control.value + control.suffix : "Unavailable"; Layout.preferredWidth: 58; horizontalAlignment: Text.AlignRight }
         }
         ThinRule { }
     }
@@ -290,7 +401,7 @@ ApplicationWindow {
                     anchors.leftMargin: 36
                     anchors.rightMargin: 36
                     spacing: 9
-                    MonoText { text: "VOLT CONTROL"; color: win.accent; font.pixelSize: 11; font.letterSpacing: 1.5 }
+                    MonoText { text: "CTRL"; color: win.accent; font.pixelSize: 11; font.letterSpacing: 1.5 }
                     MonoText { text: "/"; color: win.faint; font.pixelSize: 11 }
                     MonoText { text: win.pageNames[win.page].toUpperCase(); color: win.muted; font.pixelSize: 11; Layout.fillWidth: true }
                     Rectangle {
@@ -334,14 +445,16 @@ ApplicationWindow {
                                         Rectangle { width: Math.max(3, (overviewContent.width - 64) / 80); height: 8; color: index < Math.round(Math.max(0, systemMonitor.batteryPercent) / 100 * 40) ? win.accent : win.line }
                                     }
                                 }
-                                MonoText { text: systemMonitor.onAC ? (systemMonitor.charging ? "AC connected · Charging" : "AC connected") : ("On battery · " + (systemMonitor.remainingMinutes >= 0 ? Math.floor(systemMonitor.remainingMinutes / 60) + "h " + (systemMonitor.remainingMinutes % 60) + "m remaining (Windows estimate)" : "remaining time unavailable")); color: win.muted; font.pixelSize: 12 }
+                                MonoText { text: systemMonitor.powerSource + " · " + systemMonitor.batteryStatus + (systemMonitor.batteryStatus === "Discharging" ? " · " + (systemMonitor.dischargeWatts >= 0 ? systemMonitor.dischargeWatts.toFixed(1) + " W" : "Power Unavailable") : ""); color: win.muted; font.pixelSize: 12 }
+                                MonoText { text: systemMonitor.remainingMinutes >= 0 ? Math.floor(systemMonitor.remainingMinutes / 60) + "h " + (systemMonitor.remainingMinutes % 60) + "m (Windows estimate)" : "Remaining time: Unavailable"; color: win.muted; font.pixelSize: 12 }
+                                MonoText { text: "Health: " + (systemMonitor.batteryHealthPercent >= 0 ? systemMonitor.batteryHealthPercent.toFixed(1) + "%" : "Unavailable") + " · Full / design: " + (systemMonitor.fullChargeCapacityWh >= 0 ? systemMonitor.fullChargeCapacityWh.toFixed(1) : "Unavailable") + " / " + (systemMonitor.designCapacityWh >= 0 ? systemMonitor.designCapacityWh.toFixed(1) + " Wh" : "Unavailable"); color: win.muted; font.pixelSize: 11 }
                             }
                             ColumnLayout {
                                 Layout.fillWidth: true
                                 Layout.preferredWidth: 350
                                 spacing: 18
                                 Repeater {
-                                    model: [ {label:"CPU USAGE",value:systemMonitor.cpuPercent < 0 ? "--" : systemMonitor.cpuPercent.toFixed(1) + "%",ratio:Math.max(0, systemMonitor.cpuPercent / 100)}, {label:"GPU TEMP",value:"Unavailable",ratio:0}, {label:"MEMORY",value:systemMonitor.ramUsedGB.toFixed(1) + " of " + systemMonitor.ramTotalGB.toFixed(1) + " GiB",ratio:systemMonitor.ramRatio} ]
+                                    model: [ {label:"CPU USAGE",value:systemMonitor.cpuPercent < 0 ? "--" : systemMonitor.cpuPercent.toFixed(1) + "%",ratio:Math.max(0, systemMonitor.cpuPercent / 100)}, {label:"CPU TEMP",value:systemMonitor.cpuTemperatureC >= 0 ? systemMonitor.cpuTemperatureC.toFixed(1) + "°C" : "Unavailable",ratio:Math.max(0,systemMonitor.cpuTemperatureC / 100)}, {label:"MEMORY",value:systemMonitor.ramUsedGB.toFixed(1) + " of " + systemMonitor.ramTotalGB.toFixed(1) + " GiB",ratio:systemMonitor.ramRatio} ]
                                     delegate: ColumnLayout {
                                         required property var modelData
                                         Layout.fillWidth: true; spacing: 7
@@ -393,7 +506,7 @@ ApplicationWindow {
                                         anchors.verticalCenter: parent.verticalCenter
                                         spacing: 8
                                         Repeater {
-                                            model: [ ["MONITOR.STATUS", "LIVE"], ["POWER.SOURCE", systemMonitor.onAC ? "AC" : "BATTERY"], ["GPU.STATE", "NOT CHECKED"], ["PROCESS.GUARD", "SIMULATED"] ]
+                                            model: [ ["MONITOR.STATUS", "LIVE"], ["POWER.SOURCE", systemMonitor.onAC ? "AC" : "BATTERY"], ["GPU.STATE", systemMonitor.gpuActivity], ["PROCESS.GUARD", "SIMULATED"] ]
                                             delegate: RowLayout {
                                                 required property var modelData
                                                 Layout.fillWidth: true
@@ -406,7 +519,7 @@ ApplicationWindow {
                             }
                         }
                         Item { Layout.preferredHeight: 40 }
-                        MonoText { text: "LIVE: BATTERY / CPU / RAM    ·    OTHER VALUES: UNAVAILABLE OR SIMULATED"; color: win.faint; font.pixelSize: 10; font.letterSpacing: 0.5 }
+                        MonoText { text: "LIVE: BATTERY / CPU / RAM / DISCHARGE RATE* / CPU TEMP*    ·    *IF REPORTED BY PROVIDER"; color: win.faint; font.pixelSize: 10; font.letterSpacing: 0.5 }
                     }
                 }
 
@@ -485,7 +598,13 @@ ApplicationWindow {
                         id: hwContent
                         x: 36; y: 30; width: Math.min(parent.width - 72, 900)
                         spacing: 16
-                        PageHeader { heading: "Hardware & Cooling"; caption: "Tune CPU, GPU and fans in separate tabs. Settings here are not applied to the laptop."; Layout.fillWidth: true }
+                        PageHeader { heading: "Hardware & Cooling"; caption: "Native ASUS controls · changes are staged until you confirm Apply."; Layout.fillWidth: true }
+                        RowLayout {
+                            Layout.fillWidth: true
+                            MonoText { text: (hardwareManager.state.model || "Detecting model…") + " · " + systemMonitor.coolingMode; color: win.muted; Layout.fillWidth: true; wrapMode: Text.WordWrap }
+                            ConsoleButton { text: "Inspect"; enabled: !hardwareManager.busy; onClicked: hardwareManager.inspect() }
+                        }
+                        MonoText { text: hardwareManager.state.wmi || "Discovering ASUS interface…"; color: win.faint; font.pixelSize: 11; Layout.fillWidth: true; wrapMode: Text.WordWrap }
                         Row {
                             spacing: 29
                             Repeater {
@@ -509,121 +628,134 @@ ApplicationWindow {
                                 Row { spacing: 52
                                     Column { spacing: 3
                                         SectionTag { text: "TEMPERATURE" }
-                                        MonoText { text: "Unavailable"; font.pixelSize: 20 } }
+                                        MonoText { text: systemMonitor.cpuTemperatureC >= 0 ? systemMonitor.cpuTemperatureC.toFixed(1) + "°C" : "Unavailable"; font.pixelSize: 20 } }
                                     Column { spacing: 3
                                         SectionTag { text: "UTILIZATION" }
-                                        MonoText { text: systemMonitor.cpuPercent < 0 ? "--" : systemMonitor.cpuPercent.toFixed(1) + "%"; font.pixelSize: 27 } }
+                                        MonoText { text: systemMonitor.cpuPercent < 0 ? "Unavailable" : systemMonitor.cpuPercent.toFixed(1) + "%"; font.pixelSize: 27 } }
                                     Column { spacing: 3
                                         SectionTag { text: "PACKAGE POWER" }
-                                        MonoText { text: "Unavailable"; font.pixelSize: 20 } }
+                                        MonoText { text: systemMonitor.cpuPackagePowerWatts >= 0 ? systemMonitor.cpuPackagePowerWatts.toFixed(1) + " W" : "Unavailable"; font.pixelSize: 20 } }
                                 }
-                                Item { Layout.preferredHeight: 9 }
-                                ControlSlider { Layout.fillWidth: true; label: "Firmware thermal limit"; hint: "Not verified on this firmware"; from: 70; to: 100; value: 95; suffix: "°C"; available: false }
-                                ControlSlider { Layout.fillWidth: true; label: "Soft temperature target"; hint: "Software target, not a hard thermal cap"; from: 60; to: 95; value: win.softTemp; suffix: "°C"; onEdited: (v) => { win.softTemp = v; win.hardwareStaged = true } }
-                                ControlSlider { Layout.fillWidth: true; label: "Sustained power limit"; hint: "Long-running CPU power"; from: 12; to: 54; value: win.cpuSustained; onEdited: (v) => { win.cpuSustained = v; win.hardwareStaged = true } }
-                                ControlSlider { Layout.fillWidth: true; label: "Short-term power limit"; hint: "Temporary boost allowance"; from: 15; to: 65; value: win.cpuBurst; onEdited: (v) => { win.cpuBurst = v; win.hardwareStaged = true } }
-                                SectionTag { text: "CPU BOOST" }
-                                Row { spacing: -1
-                                    Repeater { model: ["DISABLED", "EFFICIENT", "AGGRESSIVE"]
-                                        delegate: ProfileButton {
-                                            required property string modelData
-                                            choice: modelData
-                                            active: win.boostMode === choice
-                                            onChosen: { win.boostMode = choice; win.hardwareStaged = true }
-                                        }
-                                    }
-                                }
+                                MonoText { text: systemMonitor.cpuTemperatureSource; color: win.muted; font.pixelSize: 11; Layout.fillWidth: true; wrapMode: Text.WordWrap }
+                                HardwareOptions { }
+                                ControlSlider { Layout.fillWidth: true; label: "Firmware CPU temperature limit"; hint: win.hardwareCap("cpuThermal").state + " · " + win.hardwareCap("cpuThermal").reason; suffix: "°C"; available: false }
+                                ControlSlider { Layout.fillWidth: true; label: "Software temperature target (65 / 70 / 75°C)"; hint: "UNSUPPORTED · requires verified adjustable power limits; no hard thermal guarantee"; suffix: "°C"; available: false }
+                                ControlSlider { Layout.fillWidth: true; label: "Sustained power limit (SPL)"; hint: win.hardwareCap("spl").state + " · " + win.hardwareCap("spl").reason; available: false }
+                                ControlSlider { Layout.fillWidth: true; label: "Slow package power tracking (sPPT)"; hint: win.hardwareCap("sppt").state + " · " + win.hardwareCap("sppt").reason; available: false }
+                                ControlSlider { Layout.fillWidth: true; label: "Fast package power tracking (fPPT)"; hint: win.hardwareCap("fppt").state + " · " + win.hardwareCap("fppt").reason; available: false }
+                                HardwareOptions { setting: "boostAC"; heading: "WINDOWS CPU BOOST · AC" }
+                                HardwareOptions { setting: "boostDC"; heading: "WINDOWS CPU BOOST · BATTERY" }
                             }
                             ColumnLayout {
                                 spacing: 17
+                                MonoText { text: systemMonitor.gpuActivity; color: win.cyan; font.pixelSize: 18; Layout.fillWidth: true; wrapMode: Text.WordWrap }
                                 Row { spacing: 50
                                     Column { spacing: 3
-                                        SectionTag { text: "TEMPERATURE" }
-                                        MonoText { text: "Unavailable"; font.pixelSize: 20 } }
+                                        SectionTag { text: "TEMPERATURE SNAPSHOT" }
+                                        MonoText { text: win.hardwareCap("gpuPower").temperatureC >= 0 ? win.hardwareCap("gpuPower").temperatureC + "°C" : "Unavailable"; font.pixelSize: 20 } }
                                     Column { spacing: 3
-                                        SectionTag { text: "UTILIZATION" }
-                                        MonoText { text: "Unavailable"; font.pixelSize: 20 } }
-                                    Column { spacing: 3
-                                        SectionTag { text: "POWER" }
-                                        MonoText { text: "Unavailable"; font.pixelSize: 20 } }
+                                        SectionTag { text: "POWER SNAPSHOT" }
+                                        MonoText { text: win.hardwareCap("gpuPower").powerWatts >= 0 ? Number(win.hardwareCap("gpuPower").powerWatts).toFixed(1) + " W" : "Unavailable"; font.pixelSize: 20 } }
                                 }
-                                SectionTag { text: "GPU MODE" }
-                                Row { spacing: -1
-                                    Repeater { model: ["ECO", "STANDARD", "OPTIMIZED"]
-                                        delegate: ProfileButton {
-                                            required property string modelData
-                                            choice: modelData
-                                            active: win.gpuMode === choice
-                                            onChosen: { win.gpuMode = choice; win.hardwareStaged = true }
-                                        }
-                                    }
+                                HardwareOptions { setting: "gpuMode"; heading: "GPU MODE" }
+                                MonoText { text: "OPTIMIZED: unavailable (automatic switching not implemented). ULTIMATE: disabled (restart/display workflow unverified)."; color: win.faint; font.pixelSize: 11; Layout.fillWidth: true; wrapMode: Text.WordWrap }
+                                ConsoleButton { text: "Inspect NVIDIA (may wake GPU)"; enabled: !hardwareManager.busy; onClicked: nvidiaConsent.open() }
+                                ControlSlider {
+                                    Layout.fillWidth: true; label: "GPU power limit (reductions only)"
+                                    hint: win.hardwareCap("gpuPower").state + " · " + win.hardwareCap("gpuPower").reason + " · snapshot only"
+                                    from: win.hardwareCap("gpuPower").minimumWatts || 0
+                                    to: Math.max(from, win.hardwareCap("gpuPower").maximumWatts || 0)
+                                    value: hardwareManager.pending.gpuPower !== undefined ? hardwareManager.pending.gpuPower : Math.floor((win.hardwareCap("gpuPower").currentMilliwatts || 0) / 1000)
+                                    available: win.hardwareCap("gpuPower").enabled && !hardwareManager.busy
+                                    onEdited: (v) => hardwareManager.stage("gpuPower", v)
                                 }
-                                MonoText { text: "ASUS GPU switching support must be checked before implementation."; color: win.muted; font.pixelSize: 12; wrapMode: Text.WordWrap; Layout.fillWidth: true }
-                                ControlSlider { Layout.fillWidth: true; label: "GPU power target"; hint: "Unavailable until supported controls are verified"; from: 40; to: 115; value: 80; available: false }
+                                ControlSlider { Layout.fillWidth: true; label: "GPU firmware thermal target"; hint: win.hardwareCap("gpuThermal").state + " · " + win.hardwareCap("gpuThermal").reason; suffix: "°C"; available: false }
+                                ControlSlider { Layout.fillWidth: true; label: "Dynamic Boost"; hint: win.hardwareCap("dynamicBoost").state + " · " + win.hardwareCap("dynamicBoost").reason; available: false }
+                                MonoText { text: "No overclocking. A lower power limit or stronger cooling may reduce temperature; 75°C is not guaranteed."; color: win.muted; font.pixelSize: 11; Layout.fillWidth: true; wrapMode: Text.WordWrap }
                             }
                             ColumnLayout {
                                 spacing: 16
                                 Row { spacing: 55
                                     Column { spacing: 3
                                         SectionTag { text: "CPU FAN" }
-                                        MonoText { text: "2800 RPM"; font.pixelSize: 27 } }
+                                        MonoText { text: systemMonitor.cpuFanRpm >= 0 ? systemMonitor.cpuFanRpm + " RPM" : "Unavailable"; font.pixelSize: 27 } }
                                     Column { spacing: 3
                                         SectionTag { text: "GPU FAN" }
-                                        MonoText { text: "2600 RPM"; font.pixelSize: 27 } }
+                                        MonoText { text: systemMonitor.gpuFanRpm >= 0 ? systemMonitor.gpuFanRpm + " RPM" : "Unavailable"; font.pixelSize: 27 } }
                                 }
-                                SectionTag { text: "FAN PROFILE" }
+                                SectionTag { text: "FAN PRESET · " + systemMonitor.coolingMode }
                                 Row { spacing: -1
-                                    Repeater { model: ["QUIET", "AUTO", "COOL", "CUSTOM"]
-                                        delegate: ProfileButton {
-                                            required property string modelData
-                                            choice: modelData
-                                            active: win.fanMode === choice
-                                            onChosen: { win.fanMode = choice; win.hardwareStaged = true }
+                                    Repeater { model: [{label:"QUIET",value:2},{label:"AUTO",value:0},{label:"COOL",value:1}]
+                                        ProfileButton {
+                                            required property var modelData
+                                            choice: modelData.label
+                                            active: (hardwareManager.pending.performance !== undefined ? hardwareManager.pending.performance : win.hardwareCap("performance").value) === modelData.value
+                                            enabled: win.hardwareCap("performance").enabled && !hardwareManager.busy && (modelData.value !== 1 || systemMonitor.powerSource === "AC")
+                                            opacity: enabled ? 1 : 0.4
+                                            onChosen: hardwareManager.stage("performance", modelData.value)
                                         }
                                     }
+                                    ProfileButton { choice: "CUSTOM"; active: hardwareManager.pending.cpuCurve !== undefined || hardwareManager.pending.gpuCurve !== undefined; enabled: win.hardwareCap("cpuCurve").enabled || win.hardwareCap("gpuCurve").enabled; onChosen: win.logMessage("Edit firmware curve duties below, then Apply. CUSTOM is not a separate firmware mode.") }
                                 }
+                                MonoText { text: "QUIET → Silent · AUTO → Balanced · COOL → Turbo (AC only). Mode changes can reset custom curves."; color: win.muted; font.pixelSize: 11; Layout.fillWidth: true; wrapMode: Text.WordWrap }
                                 Canvas {
-                                    Layout.fillWidth: true
-                                    Layout.preferredHeight: 235
+                                    id: fanPlot
+                                    Layout.fillWidth: true; Layout.preferredHeight: 180
                                     onPaint: {
                                         var ctx = getContext("2d")
-                                        ctx.clearRect(0, 0, width, height)
-                                        ctx.strokeStyle = "#26313E"; ctx.lineWidth = 1
-                                        for (var i=0;i<6;i++) {
-                                            var yy=15+i*(height-35)/5
-                                            ctx.beginPath();ctx.moveTo(28,yy);ctx.lineTo(width-20,yy);ctx.stroke()
+                                        ctx.clearRect(0,0,width,height)
+                                        ctx.strokeStyle="#26313E"; ctx.lineWidth=1
+                                        for (var i=0;i<6;i++) { var y=15+i*(height-35)/5; ctx.beginPath();ctx.moveTo(28,y);ctx.lineTo(width-20,y);ctx.stroke() }
+                                        var keys=["cpuCurve","gpuCurve"]
+                                        for(var k=0;k<keys.length;k++) {
+                                            var pts=hardwareManager.pending[keys[k]] || win.hardwareCap(keys[k]).value || []
+                                            ctx.strokeStyle=k===0 ? "#168BFF" : "#36C8FF";ctx.lineWidth=2;ctx.beginPath()
+                                            for(var j=0;j<pts.length;j++) { var x=28+pts[j].temperature/100*(width-55); var yy=height-20-pts[j].duty/100*(height-40); if(j===0)ctx.moveTo(x,yy);else ctx.lineTo(x,yy) }
+                                            ctx.stroke()
                                         }
-                                        var pts=[0.18,0.24,0.36,0.52,0.74,0.98]
-                                        ctx.strokeStyle="#168BFF";ctx.lineWidth=2;ctx.beginPath()
-                                        for (var j=0;j<pts.length;j++) {
-                                            var x=28+j*(width-55)/(pts.length-1)
-                                            var y=height-20-pts[j]*(height-40)
-                                            if(j===0)ctx.moveTo(x,y);else ctx.lineTo(x,y)
-                                        }
-                                        ctx.stroke()
                                     }
                                     onWidthChanged: requestPaint()
                                     onHeightChanged: requestPaint()
+                                    Connections { target: hardwareManager; function onChanged() { fanPlot.requestPaint() } }
                                 }
-                                MonoText { text: "Sample fan curve · hardware control not connected"; color: win.muted; font.pixelSize: 12 }
+                                MonoText { text: "CPU blue / GPU cyan · firmware factory curves or pending edits; not live custom-curve readback"; color: win.faint; font.pixelSize: 11; Layout.fillWidth: true; wrapMode: Text.WordWrap }
+                                SectionTag { text: "CURVE BASE MODE · EXPLICIT SELECTION, NOT CURRENT MODE" }
+                                Row {
+                                    spacing: -1
+                                    Repeater {
+                                        model: [{label:"SILENT",value:2},{label:"BALANCED",value:0},{label:"TURBO",value:1}]
+                                        ProfileButton {
+                                            required property var modelData
+                                            choice: modelData.label
+                                            active: hardwareManager.state.curveMode === modelData.value
+                                            enabled: !hardwareManager.busy && Object.keys(hardwareManager.pending).length === 0 && (modelData.value !== 1 || systemMonitor.powerSource === "AC")
+                                            opacity: enabled ? 1 : 0.4
+                                            onChosen: hardwareManager.selectCurveMode(modelData.value)
+                                        }
+                                    }
+                                }
+                                MonoText { text: "Applying custom or factory curves first applies this base mode. Active-mode readback is unavailable; avoid concurrent firmware utilities or Fn mode changes during Apply."; color: win.warning; font.pixelSize: 11; Layout.fillWidth: true; wrapMode: Text.WordWrap }
+                                FanCurveEditor { }
+                                FanCurveEditor { setting: "gpuCurve"; heading: "GPU FACTORY / CUSTOM CURVE" }
+                                ConsoleButton { text: "Restore factory fan curves"; enabled: !hardwareManager.busy; onClicked: hardwareManager.restoreFactoryCurves() }
                             }
                         }
-                        Item { Layout.preferredHeight: 16 }
-                        Rectangle {
+                        ThinRule { }
+                        MonoText { text: hardwareManager.message; color: win.muted; font.pixelSize: 12; Layout.fillWidth: true; wrapMode: Text.WordWrap }
+                        MonoText { text: "PENDING · " + JSON.stringify(hardwareManager.pending); visible: Object.keys(hardwareManager.pending).length > 0; color: win.warning; font.pixelSize: 11; Layout.fillWidth: true; wrapMode: Text.WrapAnywhere }
+                        RowLayout {
                             Layout.fillWidth: true
-                            Layout.preferredHeight: 51
-                            color: win.surfaceRaised
-                            visible: win.hardwareStaged
-                            RowLayout {
-                                anchors.fill: parent; anchors.leftMargin: 14; anchors.rightMargin: 14
-                                MonoText { text: "STAGED UI CHANGES  ·  NOT APPLIED"; color: win.warning; Layout.fillWidth: true; font.pixelSize: 11 }
-                                ConsoleButton { text: "Discard"; onClicked: { win.softTemp=75; win.cpuSustained=25; win.cpuBurst=35; win.boostMode="EFFICIENT"; win.gpuMode="STANDARD"; win.fanMode="AUTO"; win.hardwareStaged=false } }
-                                ConsoleButton { text: "Apply (demo)"; primary: true; onClicked: { win.hardwareStaged=false; win.logMessage("[SIM] hardware values saved visually; NOT applied") } }
-                            }
+                            ConsoleButton { text: "Restore saved modes / boost"; enabled: !hardwareManager.busy; onClicked: hardwareManager.restoreSavedSettings() }
+                            Item { Layout.fillWidth: true }
+                            ConsoleButton { text: "Discard"; enabled: !hardwareManager.busy; onClicked: hardwareManager.discard() }
+                            ConsoleButton { text: hardwareManager.busy ? "Working…" : "Apply"; primary: true; enabled: !hardwareManager.busy && Object.keys(hardwareManager.pending).length > 0; onClicked: hardwareConsent.open() }
+                        }
+                        Repeater {
+                            model: hardwareManager.results
+                            MonoText { required property var modelData; text: (modelData.success ? "[OK] " : "[FAILED] ") + modelData.setting + " · " + modelData.message; color: modelData.success ? win.good : win.danger; font.pixelSize: 11; Layout.fillWidth: true; wrapMode: Text.WordWrap }
                         }
                     }
                 }
-
                 // 04 — PROFILES
                 Flickable {
                     contentWidth: width; contentHeight: profilesContent.implicitHeight + 70
@@ -693,8 +825,8 @@ ApplicationWindow {
                             Layout.fillWidth: true
                             MonoText { text: "Hardware monitoring interval"; Layout.fillWidth: true }
                             ComboBox {
-                                model: ["1 s", "2 s", "5 s", "10 s"]
-                                currentIndex: 1
+                                model: ["Adaptive"]; enabled: false
+                                currentIndex: 0
                                 implicitWidth: 110
                             }
                         }
@@ -716,7 +848,7 @@ ApplicationWindow {
                         }
                         ThinRule { }
                         Item { Layout.preferredHeight: 18 }
-                        MonoText { text: "VOLT CONTROL  /  DESIGN PROTOTYPE  /  NO HARDWARE BACKEND"; color: win.faint; font.pixelSize: 10 }
+                        MonoText { text: "CTRL  /  NATIVE MONITORING  /  NATIVE ASUS CONTROLS / CAPABILITY-GATED"; color: win.faint; font.pixelSize: 10 }
                     }
                 }
             }
@@ -734,7 +866,7 @@ ApplicationWindow {
                         color: consoleMouse.containsMouse ? win.surfaceRaised : "transparent"
                         RowLayout {
                             anchors.fill: parent; anchors.leftMargin: 36; anchors.rightMargin: 36; spacing: 8
-                            MonoText { text: "volt@system >"; color: win.accent; font.pixelSize: 11 }
+                            MonoText { text: "ctrl@system >"; color: win.accent; font.pixelSize: 11 }
                             MonoText { text: win.consoleExpanded ? "console" : win.consoleMessage; color: win.faint; font.pixelSize: 11; elide: Text.ElideRight; Layout.fillWidth: true }
                             MonoText { text: win.consoleExpanded ? "Ctrl+` close" : "Ctrl+` open"; color: win.faint; font.pixelSize: 11 }
                         }
@@ -744,13 +876,13 @@ ApplicationWindow {
                         Layout.fillWidth: true; Layout.fillHeight: true
                         visible: win.consoleExpanded; spacing: 8
                         Item { Layout.preferredHeight: 8 }
-                        MonoText { text: "[INFO] Windows battery, CPU & RAM: LIVE · hardware controls: SIMULATED"; color: win.muted; font.pixelSize: 12; Layout.leftMargin: 36 }
+                        MonoText { text: "[INFO] Windows telemetry: LIVE when reported · hardware controls: staged Apply; profiles/processes: demo"; color: win.muted; font.pixelSize: 12; Layout.leftMargin: 36 }
                         MonoText { text: win.consoleMessage; color: win.cyan; font.pixelSize: 12; Layout.leftMargin: 36; Layout.fillWidth: true; wrapMode: Text.Wrap }
                         Item { Layout.fillHeight: true }
                         Rectangle { Layout.fillWidth: true; Layout.preferredHeight: 1; color: win.line }
                         RowLayout {
                             Layout.fillWidth: true; Layout.preferredHeight: 34; Layout.leftMargin: 36; Layout.rightMargin: 36
-                            MonoText { text: "volt@system >"; color: win.accent }
+                            MonoText { text: "ctrl@system >"; color: win.accent }
                             TextField {
                                 id: commandInput
                                 Layout.fillWidth: true

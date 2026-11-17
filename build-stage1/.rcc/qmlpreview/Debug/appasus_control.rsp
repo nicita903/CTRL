@@ -1,0 +1,6 @@
+--interactive
+--resource
+D:/projects/asus_control/asus_control/build-stage1/.qt/rcc/qmake_asus_control.qrc
+--resource
+D:/projects/asus_control/asus_control/build-stage1/.qt/rcc/appasus_control_raw_qml_0.qrc
+D:/projects/asus_control/asus_control/build-stage1/appasus_control.exe

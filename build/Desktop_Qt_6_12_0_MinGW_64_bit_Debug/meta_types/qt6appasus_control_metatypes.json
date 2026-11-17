@@ -3,7 +3,26 @@
         "classes": [
             {
                 "className": "SystemMonitor",
-                "lineNumber": 11,
+                "lineNumber": 15,
+                "methods": [
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "background",
+                                "type": "bool"
+                            },
+                            {
+                                "name": "page",
+                                "type": "int"
+                            }
+                        ],
+                        "index": 1,
+                        "lineNumber": 71,
+                        "name": "setMonitoringContext",
+                        "returnType": "void"
+                    }
+                ],
                 "object": true,
                 "properties": [
                     {
@@ -11,7 +30,7 @@
                         "designable": true,
                         "final": false,
                         "index": 0,
-                        "lineNumber": 13,
+                        "lineNumber": 17,
                         "name": "batteryPercent",
                         "notify": "updated",
                         "override": false,
@@ -28,7 +47,7 @@
                         "designable": true,
                         "final": false,
                         "index": 1,
-                        "lineNumber": 14,
+                        "lineNumber": 18,
                         "name": "onAC",
                         "notify": "updated",
                         "override": false,
@@ -45,7 +64,7 @@
                         "designable": true,
                         "final": false,
                         "index": 2,
-                        "lineNumber": 15,
+                        "lineNumber": 19,
                         "name": "charging",
                         "notify": "updated",
                         "override": false,
@@ -62,7 +81,7 @@
                         "designable": true,
                         "final": false,
                         "index": 3,
-                        "lineNumber": 16,
+                        "lineNumber": 20,
                         "name": "remainingMinutes",
                         "notify": "updated",
                         "override": false,
@@ -79,7 +98,7 @@
                         "designable": true,
                         "final": false,
                         "index": 4,
-                        "lineNumber": 17,
+                        "lineNumber": 21,
                         "name": "cpuPercent",
                         "notify": "updated",
                         "override": false,
@@ -96,7 +115,7 @@
                         "designable": true,
                         "final": false,
                         "index": 5,
-                        "lineNumber": 18,
+                        "lineNumber": 22,
                         "name": "ramUsedGB",
                         "notify": "updated",
                         "override": false,
@@ -113,7 +132,7 @@
                         "designable": true,
                         "final": false,
                         "index": 6,
-                        "lineNumber": 19,
+                        "lineNumber": 23,
                         "name": "ramTotalGB",
                         "notify": "updated",
                         "override": false,
@@ -130,7 +149,7 @@
                         "designable": true,
                         "final": false,
                         "index": 7,
-                        "lineNumber": 20,
+                        "lineNumber": 24,
                         "name": "ramRatio",
                         "notify": "updated",
                         "override": false,
@@ -141,6 +160,261 @@
                         "type": "double",
                         "user": false,
                         "virtual": false
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 8,
+                        "lineNumber": 26,
+                        "name": "dischargeWatts",
+                        "notify": "updated",
+                        "override": false,
+                        "read": "dischargeWatts",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "double",
+                        "user": false,
+                        "virtual": false
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 9,
+                        "lineNumber": 27,
+                        "name": "cpuTemperatureC",
+                        "notify": "updated",
+                        "override": false,
+                        "read": "cpuTemperatureC",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "double",
+                        "user": false,
+                        "virtual": false
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 10,
+                        "lineNumber": 28,
+                        "name": "cpuTemperatureSource",
+                        "notify": "updated",
+                        "override": false,
+                        "read": "cpuTemperatureSource",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QString",
+                        "user": false,
+                        "virtual": false
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 11,
+                        "lineNumber": 29,
+                        "name": "cpuFanRpm",
+                        "notify": "updated",
+                        "override": false,
+                        "read": "cpuFanRpm",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "int",
+                        "user": false,
+                        "virtual": false
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 12,
+                        "lineNumber": 30,
+                        "name": "gpuFanRpm",
+                        "notify": "updated",
+                        "override": false,
+                        "read": "gpuFanRpm",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "int",
+                        "user": false,
+                        "virtual": false
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 13,
+                        "lineNumber": 31,
+                        "name": "coolingMode",
+                        "notify": "updated",
+                        "override": false,
+                        "read": "coolingMode",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QString",
+                        "user": false,
+                        "virtual": false
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 14,
+                        "lineNumber": 32,
+                        "name": "gpuActivity",
+                        "notify": "updated",
+                        "override": false,
+                        "read": "gpuActivity",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QString",
+                        "user": false,
+                        "virtual": false
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 15,
+                        "lineNumber": 33,
+                        "name": "cpuPackagePowerWatts",
+                        "notify": "updated",
+                        "override": false,
+                        "read": "cpuPackagePowerWatts",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "double",
+                        "user": false,
+                        "virtual": false
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 16,
+                        "lineNumber": 34,
+                        "name": "cpuPackagePowerSource",
+                        "notify": "updated",
+                        "override": false,
+                        "read": "cpuPackagePowerSource",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QString",
+                        "user": false,
+                        "virtual": false
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 17,
+                        "lineNumber": 35,
+                        "name": "designCapacityWh",
+                        "notify": "updated",
+                        "override": false,
+                        "read": "designCapacityWh",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "double",
+                        "user": false,
+                        "virtual": false
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 18,
+                        "lineNumber": 36,
+                        "name": "fullChargeCapacityWh",
+                        "notify": "updated",
+                        "override": false,
+                        "read": "fullChargeCapacityWh",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "double",
+                        "user": false,
+                        "virtual": false
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 19,
+                        "lineNumber": 37,
+                        "name": "batteryHealthPercent",
+                        "notify": "updated",
+                        "override": false,
+                        "read": "batteryHealthPercent",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "double",
+                        "user": false,
+                        "virtual": false
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 20,
+                        "lineNumber": 38,
+                        "name": "batterySource",
+                        "notify": "updated",
+                        "override": false,
+                        "read": "batterySource",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QString",
+                        "user": false,
+                        "virtual": false
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 21,
+                        "lineNumber": 39,
+                        "name": "powerSource",
+                        "notify": "updated",
+                        "override": false,
+                        "read": "powerSource",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QString",
+                        "user": false,
+                        "virtual": false
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 22,
+                        "lineNumber": 40,
+                        "name": "batteryStatus",
+                        "notify": "updated",
+                        "override": false,
+                        "read": "batteryStatus",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QString",
+                        "user": false,
+                        "virtual": false
                     }
                 ],
                 "qualifiedClassName": "SystemMonitor",
@@ -148,7 +422,7 @@
                     {
                         "access": "public",
                         "index": 0,
-                        "lineNumber": 33,
+                        "lineNumber": 74,
                         "name": "updated",
                         "returnType": "void"
                     }
@@ -162,6 +436,200 @@
             }
         ],
         "inputFile": "SystemMonitor.h",
+        "outputRevision": 69
+    },
+    {
+        "classes": [
+            {
+                "className": "HardwareManager",
+                "lineNumber": 7,
+                "methods": [
+                    {
+                        "access": "public",
+                        "index": 1,
+                        "lineNumber": 22,
+                        "name": "inspect",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 2,
+                        "lineNumber": 23,
+                        "name": "inspectNvidia",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "mode",
+                                "type": "int"
+                            }
+                        ],
+                        "index": 3,
+                        "lineNumber": 24,
+                        "name": "selectCurveMode",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "setting",
+                                "type": "QString"
+                            },
+                            {
+                                "name": "value",
+                                "type": "QVariant"
+                            }
+                        ],
+                        "index": 4,
+                        "lineNumber": 25,
+                        "name": "stage",
+                        "returnType": "bool"
+                    },
+                    {
+                        "access": "public",
+                        "index": 5,
+                        "lineNumber": 26,
+                        "name": "discard",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 6,
+                        "lineNumber": 27,
+                        "name": "restoreFactoryCurves",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 7,
+                        "lineNumber": 28,
+                        "name": "restoreSavedSettings",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "confirmed",
+                                "type": "bool"
+                            }
+                        ],
+                        "index": 8,
+                        "lineNumber": 29,
+                        "name": "applyConfirmed",
+                        "returnType": "void"
+                    }
+                ],
+                "object": true,
+                "properties": [
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 0,
+                        "lineNumber": 9,
+                        "name": "state",
+                        "notify": "changed",
+                        "override": false,
+                        "read": "state",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QVariantMap",
+                        "user": false,
+                        "virtual": false
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 1,
+                        "lineNumber": 10,
+                        "name": "pending",
+                        "notify": "changed",
+                        "override": false,
+                        "read": "pending",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QVariantMap",
+                        "user": false,
+                        "virtual": false
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 2,
+                        "lineNumber": 11,
+                        "name": "results",
+                        "notify": "changed",
+                        "override": false,
+                        "read": "results",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QVariantList",
+                        "user": false,
+                        "virtual": false
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 3,
+                        "lineNumber": 12,
+                        "name": "busy",
+                        "notify": "changed",
+                        "override": false,
+                        "read": "busy",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "bool",
+                        "user": false,
+                        "virtual": false
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 4,
+                        "lineNumber": 13,
+                        "name": "message",
+                        "notify": "changed",
+                        "override": false,
+                        "read": "message",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QString",
+                        "user": false,
+                        "virtual": false
+                    }
+                ],
+                "qualifiedClassName": "HardwareManager",
+                "signals": [
+                    {
+                        "access": "public",
+                        "index": 0,
+                        "lineNumber": 32,
+                        "name": "changed",
+                        "returnType": "void"
+                    }
+                ],
+                "superClasses": [
+                    {
+                        "access": "public",
+                        "name": "QObject"
+                    }
+                ]
+            }
+        ],
+        "inputFile": "HardwareManager.h",
         "outputRevision": 69
     }
 ]

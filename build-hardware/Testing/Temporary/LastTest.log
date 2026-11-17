@@ -1,0 +1,33 @@
+Start testing: Nov 17 13:18 South Sudan Standard Time
+----------------------------------------------------------
+1/2 Testing: native_monitoring_readings
+1/2 Test: native_monitoring_readings
+Command: "D:/projects/asus_control/asus_control/build-hardware/native_monitoring_test.exe"
+Directory: D:/projects/asus_control/asus_control/build-hardware
+"native_monitoring_readings" start time: Nov 17 13:18 South Sudan Standard Time
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"native_monitoring_readings" end time: Nov 17 13:18 South Sudan Standard Time
+"native_monitoring_readings" time elapsed: 00:00:00
+----------------------------------------------------------
+
+2/2 Testing: hardware_safety_rules
+2/2 Test: hardware_safety_rules
+Command: "D:/projects/asus_control/asus_control/build-hardware/hardware_rules_test.exe"
+Directory: D:/projects/asus_control/asus_control/build-hardware
+"hardware_safety_rules" start time: Nov 17 13:18 South Sudan Standard Time
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"hardware_safety_rules" end time: Nov 17 13:18 South Sudan Standard Time
+"hardware_safety_rules" time elapsed: 00:00:00
+----------------------------------------------------------
+
+End testing: Nov 17 13:18 South Sudan Standard Time

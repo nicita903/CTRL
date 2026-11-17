@@ -1,0 +1,203 @@
+{
+    "boost": {
+        "ac": 0,
+        "dc": 0,
+        "enabled": true,
+        "options": [
+            {
+                "label": "DISABLED",
+                "value": 0
+            },
+            {
+                "label": "ENABLED",
+                "value": 1
+            },
+            {
+                "label": "AGGRESSIVE",
+                "value": 2
+            },
+            {
+                "label": "EFFICIENT",
+                "value": 3
+            }
+        ],
+        "reason": "Active Windows plan; AC and battery policies are separate",
+        "scheme": "22421b3894f6f0419685ff5bb260df2e",
+        "state": "SUPPORTED",
+        "value": null
+    },
+    "coolingMode": "Active ASUS mode unavailable",
+    "cpuCurve": {
+        "enabled": false,
+        "mode": 0,
+        "rawResponseHex": "2d3136444a4f545902090f1216192025000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+        "reason": "Unexpected factory-curve response length 64; no format guessing",
+        "state": "UNSUPPORTED",
+        "value": [
+        ]
+    },
+    "cpuFanRpm": 2000,
+    "cpuThermal": {
+        "enabled": false,
+        "reason": "ASUS query error 1",
+        "state": "ERROR",
+        "value": -1
+    },
+    "curveMode": 0,
+    "dynamicBoost": {
+        "enabled": false,
+        "reason": "Endpoint responds, but firmware does not provide a verified writable range; control disabled",
+        "state": "UNSUPPORTED",
+        "value": 0
+    },
+    "factoryCurves": {
+        "0": {
+            "cpuCurve": {
+                "enabled": false,
+                "mode": 0,
+                "rawResponseHex": "2d3136444a4f545902090f1216192025000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+                "reason": "Unexpected factory-curve response length 64; no format guessing",
+                "state": "UNSUPPORTED",
+                "value": [
+                ]
+            },
+            "gpuCurve": {
+                "enabled": false,
+                "mode": 0,
+                "rawResponseHex": "282a2b3c41454a4e02080f1116050b10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+                "reason": "Unexpected factory-curve response length 64; no format guessing",
+                "state": "UNSUPPORTED",
+                "value": [
+                ]
+            }
+        },
+        "1": {
+            "cpuCurve": {
+                "enabled": false,
+                "mode": 1,
+                "rawResponseHex": "1434393e434851560b121920252b3a47000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+                "reason": "Unexpected factory-curve response length 64; no format guessing",
+                "state": "UNSUPPORTED",
+                "value": [
+                ]
+            },
+            "gpuCurve": {
+                "enabled": false,
+                "mode": 1,
+                "rawResponseHex": "14272d32373c464c0a111a212c32444f000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+                "reason": "Unexpected factory-curve response length 64; no format guessing",
+                "state": "UNSUPPORTED",
+                "value": [
+                ]
+            }
+        },
+        "2": {
+            "cpuCurve": {
+                "enabled": false,
+                "mode": 2,
+                "rawResponseHex": "3c3f4245484b4e4e02090f1216192020000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+                "reason": "Unexpected factory-curve response length 64; no format guessing",
+                "state": "UNSUPPORTED",
+                "value": [
+                ]
+            },
+            "gpuCurve": {
+                "enabled": false,
+                "mode": 2,
+                "rawResponseHex": "3a3c3f414346484802080f11161a2121000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+                "reason": "Unexpected factory-curve response length 64; no format guessing",
+                "state": "UNSUPPORTED",
+                "value": [
+                ]
+            }
+        }
+    },
+    "fppt": {
+        "enabled": false,
+        "reason": "Endpoint responds, but firmware does not provide a verified writable range; control disabled",
+        "state": "UNSUPPORTED",
+        "value": 0
+    },
+    "gpuActivity": "GPU AVAILABLE · activity unmeasured",
+    "gpuCurve": {
+        "enabled": false,
+        "mode": 0,
+        "rawResponseHex": "282a2b3c41454a4e02080f1116050b10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+        "reason": "Unexpected factory-curve response length 64; no format guessing",
+        "state": "UNSUPPORTED",
+        "value": [
+        ]
+    },
+    "gpuFanRpm": 2100,
+    "gpuMode": {
+        "enabled": true,
+        "options": [
+            {
+                "label": "ECO",
+                "value": 1
+            },
+            {
+                "label": "STANDARD",
+                "value": 0
+            }
+        ],
+        "reason": "Firmware mode read verified. ECO Apply requires no NVIDIA clients/displays; switching may reconfigure displays",
+        "state": "SUPPORTED",
+        "value": 0
+    },
+    "gpuMux": {
+        "enabled": true,
+        "reason": "Firmware endpoint present; writes require explicit Apply",
+        "state": "SUPPORTED",
+        "value": 1
+    },
+    "gpuPower": {
+        "enabled": false,
+        "reason": "Explicit NVIDIA inspection required (may wake the dGPU); no automatic NVML initialization",
+        "state": "UNSUPPORTED",
+        "value": null
+    },
+    "gpuThermal": {
+        "enabled": false,
+        "reason": "Endpoint responds, but firmware does not provide a verified writable range; control disabled",
+        "state": "UNSUPPORTED",
+        "value": 0
+    },
+    "identityVerified": true,
+    "manufacturer": "ASUSTeK COMPUTER INC.",
+    "model": "ASUS TUF Gaming A15 FA507NV_FA507NV",
+    "performance": {
+        "enabled": true,
+        "options": [
+            {
+                "label": "SILENT",
+                "value": 2
+            },
+            {
+                "label": "BALANCED",
+                "value": 0
+            },
+            {
+                "label": "TURBO",
+                "value": 1
+            }
+        ],
+        "rawStatus": 3,
+        "reason": "Endpoint present; active mode readback unavailable. Writes have acknowledgement only. Turbo requires AC",
+        "state": "SUPPORTED",
+        "value": -1
+    },
+    "spl": {
+        "enabled": false,
+        "reason": "Endpoint responds, but firmware does not provide a verified writable range; control disabled",
+        "state": "UNSUPPORTED",
+        "value": 0
+    },
+    "sppt": {
+        "enabled": false,
+        "reason": "Endpoint responds, but firmware does not provide a verified writable range; control disabled",
+        "state": "UNSUPPORTED",
+        "value": 0
+    },
+    "wmi": "PERMISSION REQUIRED: root\\WMI discovery"
+}

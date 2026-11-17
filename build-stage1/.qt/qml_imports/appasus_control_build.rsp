@@ -1,0 +1,14 @@
+-rootPath
+D:/projects/asus_control/asus_control
+-cmake-output
+-output-file
+D:/projects/asus_control/asus_control/build-stage1/.qt/qml_imports/appasus_control_build.cmake
+-importPath
+D:/projects/asus_control/asus_control/build-stage1
+-importPath
+D:/projects/asus_control/asus_control/build-stage1/asus_control
+-importPath
+E:/programs/Qt/6.12.0/mingw_64/qml
+-qrcFiles
+D:/projects/asus_control/asus_control/build-stage1/.qt/rcc/qmake_asus_control.qrc
+D:/projects/asus_control/asus_control/build-stage1/.qt/rcc/appasus_control_raw_qml_0.qrc

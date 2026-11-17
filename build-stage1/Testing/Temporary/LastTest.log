@@ -1,0 +1,18 @@
+Start testing: Nov 17 12:19 ёжный —удан (зима)
+----------------------------------------------------------
+1/1 Testing: native_monitoring_readings
+1/1 Test: native_monitoring_readings
+Command: "D:/projects/asus_control/asus_control/build-stage1/native_monitoring_test.exe"
+Directory: D:/projects/asus_control/asus_control/build-stage1
+"native_monitoring_readings" start time: Nov 17 12:19 ёжный —удан (зима)
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.08 sec
+----------------------------------------------------------
+Test Passed.
+"native_monitoring_readings" end time: Nov 17 12:19 ёжный —удан (зима)
+"native_monitoring_readings" time elapsed: 00:00:00
+----------------------------------------------------------
+
+End testing: Nov 17 12:19 ёжный —удан (зима)

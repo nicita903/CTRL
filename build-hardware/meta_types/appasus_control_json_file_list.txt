@@ -1,0 +1,2 @@
+D:/projects/asus_control/asus_control/build-hardware/appasus_control_autogen/include/../FVSNT77ZGO/moc_SystemMonitor.cpp.json
+D:/projects/asus_control/asus_control/build-hardware/appasus_control_autogen/include/../LUN34XP4RL/moc_HardwareManager.cpp.json

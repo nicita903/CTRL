@@ -1,0 +1,6 @@
+module asus_control
+typeinfo appasus_control.qmltypes
+prefer :/qt/qml/asus_control/
+Main 254.0 Main.qml
+depends QtQuick
+

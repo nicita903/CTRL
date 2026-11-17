@@ -1,0 +1,14 @@
+-I
+D:/projects/asus_control/asus_control/build-stage1
+-I
+D:/projects/asus_control/asus_control/build-stage1/asus_control
+-I
+D:/projects/asus_control/asus_control/build-stage1
+-I
+E:/programs/Qt/6.12.0/mingw_64/qml
+--resource
+D:/projects/asus_control/asus_control/build-stage1/.qt/rcc/qmake_asus_control.qrc
+--resource
+D:/projects/asus_control/asus_control/build-stage1/.qt/rcc/appasus_control_raw_qml_0.qrc
+--module
+asus_control

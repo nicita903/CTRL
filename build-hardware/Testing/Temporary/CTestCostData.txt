@@ -1,0 +1,3 @@
+native_monitoring_readings 2 0.0054452
+hardware_safety_rules 2 0.0060128
+---
