@@ -1,0 +1,241 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-.-Debug-fd7ac0e94dcaf80d8c87.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.16"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4,
+						5,
+						6,
+						7,
+						8,
+						9,
+						10,
+						11,
+						12,
+						13,
+						14,
+						15,
+						16,
+						17,
+						18,
+						19,
+						20
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "asus_control",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4,
+						5,
+						6,
+						7,
+						8,
+						9,
+						10,
+						11,
+						12,
+						13,
+						14,
+						15,
+						16,
+						17,
+						18,
+						19,
+						20
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "all_aotstats::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-all_aotstats-Debug-452c51a87cf53f42c32b.json",
+					"name" : "all_aotstats",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "all_qmllint::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-all_qmllint-Debug-767a94f2c8543469512e.json",
+					"name" : "all_qmllint",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "all_qmllint_json::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-all_qmllint_json-Debug-026498673686e73a0b7d.json",
+					"name" : "all_qmllint_json",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "all_qmllint_module::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-all_qmllint_module-Debug-2018fb5be280b0f55a10.json",
+					"name" : "all_qmllint_module",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "all_qmltyperegistrations::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-all_qmltyperegistrations-Debug-c2f2e8b9749769e10035.json",
+					"name" : "all_qmltyperegistrations",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "appasus_control::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-appasus_control-Debug-f81d87654aa0097ca3cf.json",
+					"name" : "appasus_control",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "appasus_control_autogen::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-appasus_control_autogen-Debug-5949e3f3524ebaa4643b.json",
+					"name" : "appasus_control_autogen",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "appasus_control_autogen_timestamp_deps::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-appasus_control_autogen_timestamp_deps-Debug-bd8a7003ba2ecc66dd35.json",
+					"name" : "appasus_control_autogen_timestamp_deps",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "appasus_control_copy_qml::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-appasus_control_copy_qml-Debug-6c43659993596537d86e.json",
+					"name" : "appasus_control_copy_qml",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "appasus_control_copy_res::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-appasus_control_copy_res-Debug-96c669740e339937c20c.json",
+					"name" : "appasus_control_copy_res",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "appasus_control_qmlimportscan::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-appasus_control_qmlimportscan-Debug-fce42ae60061b2a76416.json",
+					"name" : "appasus_control_qmlimportscan",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "appasus_control_qmllint::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-appasus_control_qmllint-Debug-4086c7c67eeebb780690.json",
+					"name" : "appasus_control_qmllint",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "appasus_control_qmllint_json::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-appasus_control_qmllint_json-Debug-1f4fbe6f88163f469294.json",
+					"name" : "appasus_control_qmllint_json",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "appasus_control_qmllint_module::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-appasus_control_qmllint_module-Debug-e6ed8478ad264d548393.json",
+					"name" : "appasus_control_qmllint_module",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "appasus_control_qmlpreview::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-appasus_control_qmlpreview-Debug-fff5b9e05c21a8da1aca.json",
+					"name" : "appasus_control_qmlpreview",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "appasus_control_qmltyperegistration::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-appasus_control_qmltyperegistration-Debug-d193890c7fd40b02266f.json",
+					"name" : "appasus_control_qmltyperegistration",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "clean_qml_context_properties::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-clean_qml_context_properties-Debug-8b507673044e9456b68d.json",
+					"name" : "clean_qml_context_properties",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "dump_qml_context_properties::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-dump_qml_context_properties-Debug-19753030c36d19bbd8ba.json",
+					"name" : "dump_qml_context_properties",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "generate_finalqtconf_appasus_control::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-generate_finalqtconf_appasus_control-Debug-1db0ff5ea906b006d0e6.json",
+					"name" : "generate_finalqtconf_appasus_control",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "generate_qmlls_build_ini_file::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-generate_qmlls_build_ini_file-Debug-0e5fe1b047acd0d0bb90.json",
+					"name" : "generate_qmlls_build_ini_file",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "module_appasus_control_aotstats_target::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-module_appasus_control_aotstats_target-Debug-ad669ff7640004dd36ad.json",
+					"name" : "module_appasus_control_aotstats_target",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "D:/projects/asus_control/asus_control/build/Desktop_Qt_6_12_0_MinGW_64_bit_Debug",
+		"source" : "D:/projects/asus_control/asus_control"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 7
+	}
+}

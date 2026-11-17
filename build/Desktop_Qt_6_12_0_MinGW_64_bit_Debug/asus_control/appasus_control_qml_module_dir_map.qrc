@@ -1,0 +1,6 @@
+<RCC>
+  <qresource prefix="/">
+    <file alias="/qt/qml/asus_control">D:/projects/asus_control/asus_control/build/Desktop_Qt_6_12_0_MinGW_64_bit_Debug/asus_control</file>
+
+  </qresource>
+</RCC>
